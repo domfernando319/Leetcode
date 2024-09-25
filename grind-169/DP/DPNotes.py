@@ -74,7 +74,8 @@ def gridTraveler(n, m, memo):
 # tree nodes could have m*n combinations
 # O(n+m) Space
 
-# Memoization Suggestion -> DP in general
+##############################################################################
+# Memoization Recipe -> DP in general
 """
   1. Make it work
     * visualize the problem as a tree
@@ -85,9 +86,110 @@ def gridTraveler(n, m, memo):
     * add a memo object
     * add a base case to return memo values
     * store return values into the memo
-
   
 """
+############################################################################
+
+'''
+  canSum function (Naive)
+  write a funciton canSum(targetSum, numbers) that takes in a target Sum and an array of numbers as args
+
+  the function should return a boolean whether or not it is possible to generate the target sum 
+  you can use an element as many times as you want
+  assume all input numbers are nonnengative
+  example: canSum(7, [5,4,3,7]) -> true
+  Larger target sums are harder than smaller targets
+  We should encode args into our function, into the nodes of our drawing
+
+'''
+def canSum(targetSum, numbers):
+  if targetSum == 0:
+    return True
+  elif targetSum < 0:  # if targetSum is negative nothing in numbers can be subtract to get a solution
+    return False
+
+  #for every element in numbers we need to branch to simulate subtracting targetSum with that value
+  for num in numbers:
+    if canSum(targetSum - num, numbers): # returns boolean
+      return True # early return true if subproblem returns True
+  
+  return False
+
+# Time Complexity: two inputs: m is size of targetSum, n is length of numbers
+# max height of tree case: if you subtract 1 from m, m times
+# branching factor: n
+# O(n^m)
+# Space Complexity: call stack contains at most m recursive calls
+############################################################################
 
 
- 
+'''
+  canSum function (optimized)
+  use memoization to store calculations to query when seen again
+
+'''
+memo = {}
+def canSum(targetSum, numbers, memo):
+  # if targetSum is in memo return memo[targetSum]
+  if targetSum in memo:
+    return memo[targetSum]
+  if targetSum == 0:
+    return True
+  elif targetSum < 0:  # if targetSum is negative nothing in numbers can be subtract to get a solution
+    return False
+
+  #for every element in numbers we need to branch to simulate subtracting targetSum with that value
+  for num in numbers:
+    if canSum(targetSum - num, numbers): # returns boolean
+      memo[targetSum] = True
+      return True # early return true if subproblem returns True
+  memo[targetSum] = False
+  return False
+
+'''
+  Again we say m = target sum n = array length
+  Memoized: O(m*n) time, O(m) space
+  why? m levels by at most n calculations. after that it O(1) access from memo
+  That is also why the space complexity is O(m) - the memo will only have at most m mappings
+'''
+##################################################################
+# i need to return an array at each recursive call
+def howSum(targetSum, numbers):
+  if targetSum == 0:
+    return []
+  elif targetSum < 0:
+    return None
+  
+  for num in numbers:
+    remainderResult = howSum(targetSum - num, numbers)
+    if remainderResult is not None:
+      return [remainderResult] + [num]
+
+  return None    
+
+'''
+  m = target sum, n = length of numbers
+  # of recursive calls we make plus copying of array for every call: O(n^m * m) Time
+  Space: stack space O(m) + O(m) for array that is passed up the call stack: O(m)
+  
+'''
+memo = {}
+def howSumMemo(targetSum, numbers, memo):
+  if targetSum in memo:
+    return memo[targetSum]
+  if targetSum == 0:
+    return []
+  elif targetSum < 0:
+    return None
+  
+  for num in numbers:
+    remainderResult = howSumMemo(targetSum - num, numbers, memo)
+    if remainderResult is not None:
+      memo[targetSum] = [remainderResult] + [num]
+      return memo[targetSum]
+
+  memo[targetSum] = None
+  return None   
+# time: O(n*m) recursive calls (* m) for copying the array -> O(n* m^2)
+# space: O(m*m) for memo + O(m) for stack size -> O(m^2)
+
