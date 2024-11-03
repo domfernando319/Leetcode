@@ -53,3 +53,17 @@ class Solution:
                     q.append((newR, newC, steps + 1))
                     visited.add((newR, newC))
         return -1
+    
+    '''
+    Time Complexity: 
+        Perimeter calculation -> 2 * O(M+N) -> O(m+n)
+        isExit : O(1)
+        BFS Traversal : O(V * E) 
+    Space Complexity: 
+        Queue: O(M*N) worst case -> contains all cells in maze = m*n
+        Visited set: same O (M*N)
+        Perimeter: O(2(m+n)) -> O(m+n)
+
+        Overall: O(M*N)
+    
+    '''
